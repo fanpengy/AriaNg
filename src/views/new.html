@@ -42,7 +42,7 @@
                     <div class="new-task-table" ng-if="context.taskType === 'urls'">
                         <div class="row">
                             <div class="col-sm-12">
-                                <p ng-bind="'format.task.new.download-links' | translate: {count: getValidUrlsCount()}">Download Links:</p>
+                                <p ng-bind="'format.task.new.download-links' | translate: {count: getValidUrlsCount()}">Download Links:</p> 
                                 <div class="form-group has-feedback no-margin" ng-class="{ 'has-error' : newTaskForm.urls.$invalid && newTaskForm.urls.$dirty, 'has-success' : newTaskForm.urls.$valid && newTaskForm.urls.$dirty }">
                                     <textarea name="urls" class="form-control" rows="10" autofocus="autofocus" ng-auto-focus ng-valid-urls
                                               ng-model="context.urls" ng-required="true" ng-keydown="urlTextboxKeyDown($event)"
@@ -50,6 +50,11 @@
                                     <div class="form-control-icon" ng-if="newTaskForm.urls.$dirty">
                                         <i class="fa form-control-feedback" ng-class="{'fa-check':newTaskForm.urls.$valid, 'fa-times':newTaskForm.urls.$invalid}"></i>
                                     </div>
+                                    <input  class="form-control" type="text"
+                                            style="margin-top: 1%;"
+                                            ng-if="getValidUrlsCount() === 1"
+                                            ng-placeholder="('Search' | translate)"
+                                            ng-model="context.filename" />
                                 </div>
                             </div>
                         </div>

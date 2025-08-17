@@ -592,10 +592,11 @@
                     }
                 });
             },
-            newUriTask: function (task, pauseOnAdded, callback, silent) {
+            newUriTask: function (task, pauseOnAdded, filename, callback, silent) {
                 return aria2RpcService.addUri({
                     task: task,
                     pauseOnAdded: !!pauseOnAdded,
+                    filename: filename,
                     silent: !!silent,
                     callback: callback
                 });

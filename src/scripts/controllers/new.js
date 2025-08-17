@@ -43,6 +43,21 @@
             aria2SettingService.addSettingHistory('dir', options.dir);
         };
 
+        var getDownloadTasksByLink = function (options) {
+            var urls = ariaNgCommonService.parseUrlsFromOriginInput($scope.context.urls);
+
+            if (!options) {
+                options = angular.copy($scope.context.options);
+            }
+
+            var task = {
+                urls: [urls[0]],
+                options: options
+            }
+
+            return task;
+        };
+
         var getDownloadTasksByLinks = function (options) {
             var urls = ariaNgCommonService.parseUrlsFromOriginInput($scope.context.urls);
             var tasks = [];
@@ -63,6 +78,16 @@
             }
 
             return tasks;
+        };
+
+        var downloadByLink = function (pauseOnAdded, responseCallback) {
+            var options = angular.copy($scope.context.options);
+            var filename = angular.copy($scope.context.filename);
+            var task = getDownloadTasksByLink(options);
+
+            saveDownloadPath(options);
+
+            return aria2TaskService.newUriTask(task, pauseOnAdded, filename, responseCallback);
         };
 
         var downloadByLinks = function (pauseOnAdded, responseCallback) {
@@ -101,6 +126,7 @@
         $scope.context = {
             currentTab: 'links',
             taskType: 'urls',
+            filename: '',
             urls: '',
             uploadFile: null,
             availableOptions: (function () {
@@ -234,7 +260,13 @@
             };
 
             if ($scope.context.taskType === 'urls') {
-                $rootScope.loadPromise = downloadByLinks(pauseOnAdded, responseCallback);
+                if ($scope.context.filename != '') {
+                    console.log('single')
+                    $rootScope.loadPromise = downloadByLink(pauseOnAdded, responseCallback);
+                } else {
+                    $rootScope.loadPromise = downloadByLinks(pauseOnAdded, responseCallback);
+                }
+                
             } else if ($scope.context.taskType === 'torrent') {
                 $rootScope.loadPromise = downloadByTorrent(pauseOnAdded, responseCallback);
             } else if ($scope.context.taskType === 'metalink') {
@@ -273,11 +305,16 @@
 
                 return false;
             }
+
         };
 
         $scope.getValidUrlsCount = function () {
             var urls = ariaNgCommonService.parseUrlsFromOriginInput($scope.context.urls);
-            return urls ? urls.length : 0;
+            var length = urls ? urls.length : 0;
+            if (length != 1) {
+                $scope.context.filename = ''
+            }
+            return length
         };
 
         $rootScope.loadPromise = $timeout(function () {}, 100);

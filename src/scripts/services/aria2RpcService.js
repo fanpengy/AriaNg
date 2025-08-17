@@ -238,6 +238,9 @@
             if (context && context.pauseOnAdded) {
                 options.pause = 'true';
             }
+            if (context && context.filename) {
+                options.out = context.filename
+            }
 
             return options;
         };
